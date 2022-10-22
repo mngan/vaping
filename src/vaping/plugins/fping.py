@@ -138,6 +138,7 @@ class FPingBase(vaping.plugins.TimedProbe):
     def _run_proc(self):
         args = [
             self.config["command"],
+            "-q",
             "-u",
             "-C%d" % self.count,
             "-p%d" % self.period,

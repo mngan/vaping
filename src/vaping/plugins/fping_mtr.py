@@ -105,14 +105,18 @@ class FPingMTR(vaping.plugins.fping.FPingBase):
             "-w1",
             # -q number of queries
             "-q1",
+            "-I",
             self.mtr_host,
         ]
 
         # get both stdout and stderr
         proc = self.popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-
-        with proc.stdout:
-            hosts = self.parse_traceroute(iter(proc.stdout.readline, b""))
+        try:
+            (stdout, stderr) = proc.communicate(timeout=20)
+            hosts = self.parse_traceroute(stdout.splitlines())
+        except subprocess.TimeoutExpired:
+            hosts = []
+        
         return hosts
 
     def probe(self):
